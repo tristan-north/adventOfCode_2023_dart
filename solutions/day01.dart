@@ -1,24 +1,21 @@
 import 'dart:io';
 import 'dart:convert';
 
+// TODO: Refine solution.
+
 void main() {
-  final input = File('input/day01_example.txt').readAsStringSync();
+  final input = File('input/day01_input.txt').readAsStringSync();
   final lines = LineSplitter.split(input);
 
-  // {
-  //   final sum = lines.fold(0, (sum, line) => sum + getNumberFromLine(line));
-  //   print('Part One solution: $sum');
-  // }
+  {
+    final sum = lines.fold(0, (sum, line) => sum + getNumberFromLine(line));
+    print('Part One solution: $sum');
+  }
 
-  getNumberInclStringFromLine(lines.first);
-  // lines.forEach(getNumberInclStringFromLine);
-  // {
-  //   final sum = lines.fold(
-  //     0,
-  //     (sum, line) => sum + getNumberInclStringFromLine(line),
-  //   );
-  //   print('Part Two solution: $sum');
-  // }
+  {
+    final sum = lines.fold(0, (sum, line) => sum + getNumberInclStringFromLine(line));
+    print('Part Two solution: $sum');
+  }
 }
 
 int getNumberFromLine(String line) {
@@ -31,16 +28,59 @@ int getNumberFromLine(String line) {
   return int.parse('$first$last');
 }
 
-enum nums { one, two, three, four, five, six, seven, eight, nine }
+const targets = [
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '0',
+];
 
 int getNumberInclStringFromLine(String line) {
-  print(line);
-  for (final n in nums.values) {
-    final matchIndex = line.indexOf(n.name);
-    if (line.allMatches(n.name).firstOrNull != null) {
-    //   print('${n.name}');
-    // }
+  int firstMatchIndex = 999;
+  String firstMatch = '*';
+  int lastMatchIndex = -1;
+  String lastMatch = '*';
+  for (final t in targets) {
+    var matchIndex = line.indexOf(t);
+
+    if (matchIndex == -1) continue;
+
+    if (matchIndex < firstMatchIndex) {
+      firstMatchIndex = matchIndex;
+      firstMatch = t;
+    }
+
+    matchIndex = line.lastIndexOf(t);
+    if (matchIndex == -1) continue;
+    if (matchIndex > lastMatchIndex) {
+      lastMatchIndex = matchIndex;
+      lastMatch = t;
+    }
   }
 
-  return 0;
+  // Convert eg 'six' to '6'
+  var i = targets.indexOf(firstMatch);
+  if (i < 9) firstMatch = targets[i + 9];
+  i = targets.indexOf(lastMatch);
+  if (i < 9) lastMatch = targets[i + 9];
+
+  print(line);
+  print('$firstMatch$lastMatch');
+
+  return int.parse('$firstMatch$lastMatch');
 }
