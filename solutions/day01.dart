@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
 
-// TODO: Refine solution.
-
 void main() {
   final input = File('input/day01_input.txt').readAsStringSync();
   final lines = LineSplitter.split(input);
@@ -51,36 +49,38 @@ const targets = [
 ];
 
 int getNumberInclStringFromLine(String line) {
-  int firstMatchIndex = 999;
-  String firstMatch = '*';
-  int lastMatchIndex = -1;
-  String lastMatch = '*';
+  ({int idx, String char})? first;
+  ({int idx, String char})? last;
+
   for (final t in targets) {
-    var matchIndex = line.indexOf(t);
+    {
+      final matchIndex = line.indexOf(t);
 
-    if (matchIndex == -1) continue;
+      if (matchIndex == -1) continue;
 
-    if (matchIndex < firstMatchIndex) {
-      firstMatchIndex = matchIndex;
-      firstMatch = t;
+      if (first == null || matchIndex < first.idx) {
+        first = (idx: matchIndex, char: t);
+      }
     }
 
-    matchIndex = line.lastIndexOf(t);
-    if (matchIndex == -1) continue;
-    if (matchIndex > lastMatchIndex) {
-      lastMatchIndex = matchIndex;
-      lastMatch = t;
+    {
+      final matchIndex = line.lastIndexOf(t);
+
+      if (last == null || matchIndex > last.idx) {
+        last = (idx: matchIndex, char: t);
+      }
     }
   }
 
-  // Convert eg 'six' to '6'
-  var i = targets.indexOf(firstMatch);
-  if (i < 9) firstMatch = targets[i + 9];
-  i = targets.indexOf(lastMatch);
-  if (i < 9) lastMatch = targets[i + 9];
+  final firstChar = possibleWordToNumber(first!.char);
+  final lastChar = possibleWordToNumber(last!.char);
 
-  print(line);
-  print('$firstMatch$lastMatch');
+  return int.parse('$firstChar$lastChar');
+}
 
-  return int.parse('$firstMatch$lastMatch');
+// eg 'six' to '6'. If already '6' return '6'.
+String possibleWordToNumber(String word) {
+  final i = targets.indexOf(word);
+
+  return i < 9 ? targets[i + 9] : word;
 }
