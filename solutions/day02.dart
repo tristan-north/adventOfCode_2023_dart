@@ -1,40 +1,32 @@
 import 'dart:io';
 
-const cubeLimits = (red: 12, green: 13, blue: 14);
+const cubeLimits = {'red': 12, 'green': 13, 'blue': 14};
 
 void main() {
-  final input = File('input/day02_example.txt').readAsLinesSync();
+  final input = File('input/day02_input.txt').readAsLinesSync();
 
-  // Next add up the game numbers which pass and try making
-  // a big filter pipe.
+  int solutionAccum = 0;
+  for (final (i, line) in input.indexed) {
+    // Match on eg '15 red'
+    final matches = RegExp(r'(\d+) (red|green|blue)').allMatches(line);
 
-  input.forEach((line) {
-    final gameDataStr = line.split(':').skip(1).first;
+    // Handle null matches here
+    final matchStrings = [for (final match in matches) ?match.group(0)];
 
-    // TODO: Fix this abomination
-    final gameData = gameDataStr
-        .split(';')
-        .map((n) => n.split(',').map((j) => j.trim()).toList().toList())
-        .toList();
+    final valid = matchStrings.every((str) => withinCubeLimit(str));
 
-    print('$gameData');
+    if (valid) solutionAccum += i + 1; // +1 because game ids start at 1
+  }
 
-    final valid = gameData.expand((x) => x).every((x) => withinCubeLimit(x));
-    print('valid: $valid');
-  });
+  print('Part One Solution: $solutionAccum');
 }
 
+// Takes a string like "4 red" or "2 green" and returns if it's
+// within the limits specified by the cubeLimits constant.
 bool withinCubeLimit(String str) {
   final [nChr, color] = str.split(' ');
 
   final n = int.parse(nChr);
 
-  switch (color) {
-    case 'red' when n > cubeLimits.red:
-    case 'green' when n > cubeLimits.green:
-    case 'blue' when n > cubeLimits.blue:
-      return false;
-  }
-
-  return true;
+  return n <= cubeLimits[color]!;
 }

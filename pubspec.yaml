@@ -1,0 +1,7 @@
+name: adventOfCode_2023_dart
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  collection: ^1.19.1
