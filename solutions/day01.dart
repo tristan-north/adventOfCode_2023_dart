@@ -11,7 +11,10 @@ void main() {
   }
 
   {
-    final sum = lines.fold(0, (sum, line) => sum + getNumberInclStringFromLine(line));
+    final sum = lines.fold(
+      0,
+      (sum, line) => sum + getNumberInclStringFromLine(line),
+    );
     print('Part Two solution: $sum');
   }
 }
